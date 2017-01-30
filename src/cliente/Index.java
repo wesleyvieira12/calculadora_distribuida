@@ -23,7 +23,7 @@ public class Index extends javax.swing.JFrame {
 
     ArrayList<String> valores = new ArrayList();
     ArrayList<String> operandos = new ArrayList();
-    
+
     ArrayList<String> ips = new ArrayList();
     boolean limpar = false;
 
@@ -283,71 +283,106 @@ public class Index extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void separandoValoresDeOperandos(String x){
-        
-        int y=0;
-        
-        for(int j = 0; j<x.length();j++){
-            if(x.charAt(j)=='+' || x.charAt(j)=='-' || x.charAt(j)=='*' || x.charAt(j)=='/'){
-                operandos.add(y,""+x.charAt(j));
+    private void separandoValoresDeOperandos(String x) {
+
+        int y = 0;
+
+        for (int j = 0; j < x.length(); j++) {
+            if (x.charAt(j) == '+' || x.charAt(j) == '-' || x.charAt(j) == '*' || x.charAt(j) == '/') {
+                operandos.add(y, "" + x.charAt(j));
                 y++;
-            }else{
-                valores.add(y,""+x.charAt(j));
+            } else {
+                valores.add(y, "" + x.charAt(j));
             }
         }
-        
+
     }
-    
+
+    private int verificandoOperandos(ArrayList<String> x) {
+        int servidor1 = 0, servidor2 = 0;
+        for (int i = 0; i < x.size(); i++) {
+            if (x.get(i).equals("+") || x.get(i).equals("-")) {
+                servidor1++;
+            } else {
+                servidor2++;
+            }
+
+        }
+        if (servidor1 != 0 && servidor2 != 0) {
+            return 2;
+        }
+        return 1;
+    }
+
+
     private void jButton_iqualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_iqualActionPerformed
         // TODO add your handling code here:
-        if(!limpar){
-        separandoValoresDeOperandos(operacao.getText());
-        
-        if (ips != null) {
-            if (operandos.size() > 1) {
-                Socket servidor4;
-                try {
-                    //Criação do socket
-                    servidor4 = new Socket("127.0.0.1",2080);
-                    //Envio de Array contendo operadores e valores a serem calculados
-                    ObjectOutputStream out = new ObjectOutputStream(servidor4.getOutputStream());
-                    out.writeObject(operandos);
-                    //Recebendo o resultado do servidor 4
-                    BufferedReader in = new BufferedReader(new InputStreamReader(servidor4.getInputStream()));
-                    System.out.println("Resultado:" + in.readLine());
-                    
-                } catch (IOException ex) {
-                    Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+        if (!limpar) {
+            separandoValoresDeOperandos(operacao.getText());
+
+            if (ips != null) {
+                if (verificandoOperandos(operandos) == 2) {
+                    Socket servidor4;
+                    try {
+                        //Criação do socket
+                        servidor4 = new Socket(ips.get(3), 12345);
+                        //Envio de Array contendo operadores e valores a serem calculados
+                        ObjectOutputStream out = new ObjectOutputStream(servidor4.getOutputStream());
+                        out.writeObject(operandos);
+                        out.writeObject(valores);
+                        out.writeObject(ips);
+                        //Recebendo o resultado do servidor 4
+                        //BufferedReader in = new BufferedReader(new InputStreamReader(servidor4.getInputStream()));
+                        //System.out.println("Resultado:" + in.readLine());
+
+                    } catch (IOException ex) {
+                        Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                } else {
+                    if (operandos.get(0).equals("+") || operandos.get(0).equals("-")) {
+                                               
+                        Socket servidor1;
+                        try {
+                            //Criação do socket
+                            servidor1 = new Socket("127.0.0.1", 12345);
+                            //Envio de Array contendo operadores e valores a serem calculados
+                            ObjectOutputStream out = new ObjectOutputStream(servidor1.getOutputStream());
+                            out.writeObject(operandos);
+                            out.writeObject(valores);
+                            out.writeObject(ips);
+                            //Recebendo o resultado do servidor 4
+                            //BufferedReader in = new BufferedReader(new InputStreamReader(servidor1.getInputStream()));
+                            //System.out.println("Resultado:" + in.readLine());
+
+                        } catch (IOException ex) {
+                            Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                    }
+                    if (operandos.get(0).equals("*") || operandos.get(0).equals("/")) {
+
+                    }
                 }
-                
-                
+                operandos.removeAll(operandos);
+                valores.removeAll(valores);
+                limpar = true;
+
             } else {
-                if (operandos.get(0).equals("+") || operandos.get(0).equals("-")) {
-                    
-                }
-                if (operandos.get(0).equals("*") || operandos.get(0).equals("/")) {
-                    
-                }
+                JOptionPane.showMessageDialog(null, "Cadastre os Ips dos servidores!");
             }
-            operandos.removeAll(operandos);
-            valores.removeAll(valores);
-            limpar=true;
-            
-        }else{
-            JOptionPane.showMessageDialog(null,"Cadastre os Ips dos servidores!");
-        }
-        }else{
+        } else {
             operacao.setText("");
-            limpar= false;
+            limpar = false;
         }
-        
+
     }//GEN-LAST:event_jButton_iqualActionPerformed
 
     private void jButton0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton0ActionPerformed
         // TODO add your handling code here:
         if (!operacao.getText().equals("")) {
             operacao.setText(operacao.getText() + "0");
-           
+
         }
 
     }//GEN-LAST:event_jButton0ActionPerformed
@@ -361,7 +396,6 @@ public class Index extends javax.swing.JFrame {
         // TODO add your handling code here:
 
         operacao.setText(operacao.getText() + "7");
-
 
 
     }//GEN-LAST:event_jButton7ActionPerformed
@@ -431,7 +465,7 @@ public class Index extends javax.swing.JFrame {
         if (!operacao.getText().equals("")) {
             if (operacao.getText().charAt(operacao.getText().length() - 1) != '-') {
                 operacao.setText(operacao.getText() + "-");
-                
+
             }
         }
     }//GEN-LAST:event_jButton_menosActionPerformed
@@ -441,7 +475,7 @@ public class Index extends javax.swing.JFrame {
         if (!operacao.getText().equals("")) {
             if (operacao.getText().charAt(operacao.getText().length() - 1) != '/') {
                 operacao.setText(operacao.getText() + "/");
-                
+
             }
         }
     }//GEN-LAST:event_jButton_divisaoActionPerformed
@@ -451,7 +485,7 @@ public class Index extends javax.swing.JFrame {
         if (!operacao.getText().equals("")) {
             if (operacao.getText().charAt(operacao.getText().length() - 1) != '*') {
                 operacao.setText(operacao.getText() + "*");
-                
+
             }
         }
     }//GEN-LAST:event_jButton_multiplicacaoActionPerformed

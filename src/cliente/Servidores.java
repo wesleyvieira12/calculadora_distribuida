@@ -144,6 +144,7 @@ public class Servidores extends javax.swing.JFrame {
 
     private void jButton_cadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_cadastrarActionPerformed
         // TODO add your handling code here:
+        
         servidores.add(0, ip_1.getText());
         servidores.add(1, ip_2.getText());
         servidores.add(2, ip_3.getText());
