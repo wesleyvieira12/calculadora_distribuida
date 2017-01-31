@@ -6,6 +6,7 @@
 package cliente;
 
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -145,6 +146,10 @@ public class Servidores extends javax.swing.JFrame {
     private void jButton_cadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_cadastrarActionPerformed
         // TODO add your handling code here:
         
+        //Verifica se todos os IPs foram cadastrados
+        if(ip_1.getText().equals("") || ip_2.getText().equals("") || ip_3.getText().equals("") || ip_4.getText().equals("")){
+         JOptionPane.showMessageDialog(null, "Digite todos os IPs");
+        }else{
         servidores.add(0, ip_1.getText());
         servidores.add(1, ip_2.getText());
         servidores.add(2, ip_3.getText());
@@ -152,6 +157,7 @@ public class Servidores extends javax.swing.JFrame {
         this.setVisible(false);
         Index i = new Index(servidores);
         i.setVisible(true);
+        }
     }//GEN-LAST:event_jButton_cadastrarActionPerformed
 
     /**

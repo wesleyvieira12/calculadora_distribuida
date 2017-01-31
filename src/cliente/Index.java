@@ -5,9 +5,8 @@
  */
 package cliente;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -21,11 +20,17 @@ import javax.swing.JOptionPane;
  */
 public class Index extends javax.swing.JFrame {
 
-    ArrayList<String> valores = new ArrayList();
-    ArrayList<String> operandos = new ArrayList();
+    //Guarda valores da operação em ordem
 
+    ArrayList<String> valores = new ArrayList();
+    //Guarda os tipos de operações ( +, - , * , /) em ordem
+    ArrayList<String> operandos = new ArrayList();
+    //Ips dos servidores
+    //Servidor 1 : ips.get(0)
+    //Servidor 2 : ips.get(1)
+    //Servidor 3 : ips.get(2)
+    //Servidor 4 : ips.get(3)
     ArrayList<String> ips = new ArrayList();
-    boolean limpar = false;
 
     public Index(ArrayList<String> ips) {
         this.ips = ips;
@@ -283,6 +288,7 @@ public class Index extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    //Pega a string do campo TextArea (operação) e armanzena os valores e operandos nos ArrayLists
     private void separandoValoresDeOperandos(String x) {
 
         int y = 0;
@@ -297,6 +303,8 @@ public class Index extends javax.swing.JFrame {
         }
 
     }
+
+    //Verifica se a operação precisa de mais de um servidor para obter o resultado
 
     private int verificandoOperandos(ArrayList<String> x) {
         int servidor1 = 0, servidor2 = 0;
@@ -314,75 +322,101 @@ public class Index extends javax.swing.JFrame {
         return 1;
     }
 
+    private boolean verificaIps() {
+        if (ips != null) {
+            return true;
+        } else {
 
+            JOptionPane.showMessageDialog(null, "Cadastre os Ips dos servidores!");
+            return false;
+        }
+
+    }
     private void jButton_iqualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_iqualActionPerformed
         // TODO add your handling code here:
-        if (!limpar) {
-            separandoValoresDeOperandos(operacao.getText());
 
-            if (ips != null) {
-                if (verificandoOperandos(operandos) == 2) {
-                    Socket servidor4;
+        separandoValoresDeOperandos(operacao.getText());
+        //Verifica se tem ip cadastrado
+        if (verificaIps()) {
+            //Caso tenha mais de duas operações em servidores diferentes
+            if (permitirOperando(operacao.getText().charAt(operacao.getText().length() - 1))) {
+            if (verificandoOperandos(operandos) == 2) {
+                
+                Socket servidor4;
+                try {
+                    //Criação do socket
+                    servidor4 = new Socket(ips.get(3), 12345);
+                    //Envio de Array contendo operadores e valores a serem calculados
+                    ObjectOutputStream out = new ObjectOutputStream(servidor4.getOutputStream());
+                    out.writeObject(operandos);
+                    out.writeObject(valores);
+                    out.writeObject(ips);
+                    //Recebendo o resultado do servidor 4
+                    DataInputStream in = new DataInputStream(servidor4.getInputStream());
+                    operacao.setText("" + in.readInt());
+
+                } catch (IOException ex) {
+                    Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            } else {
+                //Verifica se as operações são do servidor 1
+                if (operandos.get(0).equals("+") || operandos.get(0).equals("-")) {
+
+                    Socket servidor1;
                     try {
                         //Criação do socket
-                        servidor4 = new Socket(ips.get(3), 12345);
+                        servidor1 = new Socket(ips.get(0), 12345);
                         //Envio de Array contendo operadores e valores a serem calculados
-                        ObjectOutputStream out = new ObjectOutputStream(servidor4.getOutputStream());
+                        ObjectOutputStream out = new ObjectOutputStream(servidor1.getOutputStream());
                         out.writeObject(operandos);
                         out.writeObject(valores);
-                        out.writeObject(ips);
-                        //Recebendo o resultado do servidor 4
-                        //BufferedReader in = new BufferedReader(new InputStreamReader(servidor4.getInputStream()));
-                        //System.out.println("Resultado:" + in.readLine());
+
+                        //Recebendo o resultado do servidor 1
+                        DataInputStream in = new DataInputStream(servidor1.getInputStream());
+                        operacao.setText("" + in.readInt());
 
                     } catch (IOException ex) {
                         Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                 } else {
-                    if (operandos.get(0).equals("+") || operandos.get(0).equals("-")) {
-                                               
-                        Socket servidor1;
-                        try {
-                            //Criação do socket
-                            servidor1 = new Socket("127.0.0.1", 12345);
-                            //Envio de Array contendo operadores e valores a serem calculados
-                            ObjectOutputStream out = new ObjectOutputStream(servidor1.getOutputStream());
-                            out.writeObject(operandos);
-                            out.writeObject(valores);
-                            out.writeObject(ips);
-                            //Recebendo o resultado do servidor 4
-                            //BufferedReader in = new BufferedReader(new InputStreamReader(servidor1.getInputStream()));
-                            //System.out.println("Resultado:" + in.readLine());
+                    Socket servidor2;
+                    try {
+                        //Criação do socket
+                        servidor2 = new Socket(ips.get(1), 12345);
+                        //Envio de Array contendo operadores e valores a serem calculados
+                        ObjectOutputStream out = new ObjectOutputStream(servidor2.getOutputStream());
+                        out.writeObject(operandos);
+                        out.writeObject(valores);
 
-                        } catch (IOException ex) {
-                            Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        //Recebendo o resultado do servidor 2
+                        DataInputStream in = new DataInputStream(servidor2.getInputStream());
+                        operacao.setText("" + in.readInt());
 
-                    }
-                    if (operandos.get(0).equals("*") || operandos.get(0).equals("/")) {
-
+                    } catch (IOException ex) {
+                        Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                operandos.removeAll(operandos);
-                valores.removeAll(valores);
-                limpar = true;
 
-            } else {
-                JOptionPane.showMessageDialog(null, "Cadastre os Ips dos servidores!");
             }
-        } else {
-            operacao.setText("");
-            limpar = false;
+            }
+
+            //Limpando operandos e valores
+            operandos.removeAll(operandos);
+            valores.removeAll(valores);
+            System.out.println("Limpado operadores e valores");
+
         }
+
 
     }//GEN-LAST:event_jButton_iqualActionPerformed
 
     private void jButton0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton0ActionPerformed
         // TODO add your handling code here:
+        //Não deixa digitar o zero primeiro
         if (!operacao.getText().equals("")) {
             operacao.setText(operacao.getText() + "0");
-
         }
 
     }//GEN-LAST:event_jButton0ActionPerformed
@@ -450,10 +484,20 @@ public class Index extends javax.swing.JFrame {
         operacao.setText(operacao.getText() + "3");
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    //Verificar qual o ultimo caractere da operação e analizar se é um operando
+    private boolean permitirOperando(char ultimo_caractere) {
+
+        if (ultimo_caractere == '+' || ultimo_caractere == '-' || ultimo_caractere == '*' || ultimo_caractere == '/') {
+            return false;
+        }
+        return true;
+    }
+
     private void jButton_maisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_maisActionPerformed
         // TODO add your handling code here:
+        //Evita digitar um operando primeiro
         if (!operacao.getText().equals("")) {
-            if (operacao.getText().charAt(operacao.getText().length() - 1) != '+') {
+            if (permitirOperando(operacao.getText().charAt(operacao.getText().length() - 1))) {
                 operacao.setText(operacao.getText() + "+");
             }
         }
@@ -463,7 +507,7 @@ public class Index extends javax.swing.JFrame {
     private void jButton_menosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_menosActionPerformed
         // TODO add your handling code here:
         if (!operacao.getText().equals("")) {
-            if (operacao.getText().charAt(operacao.getText().length() - 1) != '-') {
+            if (permitirOperando(operacao.getText().charAt(operacao.getText().length() - 1))) {
                 operacao.setText(operacao.getText() + "-");
 
             }
@@ -473,7 +517,7 @@ public class Index extends javax.swing.JFrame {
     private void jButton_divisaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_divisaoActionPerformed
         // TODO add your handling code here:
         if (!operacao.getText().equals("")) {
-            if (operacao.getText().charAt(operacao.getText().length() - 1) != '/') {
+            if (permitirOperando(operacao.getText().charAt(operacao.getText().length() - 1))) {
                 operacao.setText(operacao.getText() + "/");
 
             }
@@ -483,7 +527,7 @@ public class Index extends javax.swing.JFrame {
     private void jButton_multiplicacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_multiplicacaoActionPerformed
         // TODO add your handling code here:
         if (!operacao.getText().equals("")) {
-            if (operacao.getText().charAt(operacao.getText().length() - 1) != '*') {
+            if (permitirOperando(operacao.getText().charAt(operacao.getText().length() - 1))) {
                 operacao.setText(operacao.getText() + "*");
 
             }
@@ -492,8 +536,33 @@ public class Index extends javax.swing.JFrame {
 
     private void jButton_raizActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_raizActionPerformed
         // TODO add your handling code here:
+        if (verificaIps()) {
+            if (!operacao.getText().equals("")) {
+                if (permitirOperando(operacao.getText().charAt(operacao.getText().length() - 1))) {
+                    separandoValoresDeOperandos(operacao.getText());
+                    Socket servidor3;
+                    try {
+                        //Criação do socket
+                        servidor3 = new Socket(ips.get(3), 12345);
+                        //Envio de Array contendo operadores e valores a serem calculados
+                        ObjectOutputStream out = new ObjectOutputStream(servidor3.getOutputStream());
+                        out.writeObject(operandos);
+                        out.writeObject(valores);
 
+                        //Recebendo o resultado do servidor 3
+                        DataInputStream in = new DataInputStream(servidor3.getInputStream());
+                        operacao.setText("" + in.readInt());
 
+                    } catch (IOException ex) {
+                        Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            //Limpando operandos e valores
+            operandos.removeAll(operandos);
+            valores.removeAll(valores);
+            System.out.println("Limpado operadores e valores");
+            }
+        }
     }//GEN-LAST:event_jButton_raizActionPerformed
 
     private void menu_servidorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menu_servidorMouseClicked

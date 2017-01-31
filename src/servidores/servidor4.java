@@ -7,6 +7,7 @@ package servidores;
 
 import cliente.Index;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -51,12 +52,7 @@ public class servidor4 {
                     ArrayList<String> valores = (ArrayList<String>) in.readObject();
                     ArrayList<String> ips = (ArrayList<String>) in.readObject();
                     int count = operandos.size();
-                    
-                    //Exemplo de operação: 0+1-x+4/5
-                    //operandos = 4
-                    //count = 4
-                    //i = 4
-                   
+                                                         
                     while (verificandoOperandos(operandos)==2) {
                         for (int i = 0; i<count;i++) {  
                             
@@ -149,33 +145,36 @@ public class servidor4 {
                                 valores.remove(operandos.indexOf(x));
                                 valores.remove(operandos.indexOf(x));
                                 //Adicionar resultado nos valores
-                                valores.add(operandos.indexOf(x), "y");
+                                valores.add(operandos.indexOf(x), "2");
                                 operandos.remove(x);
                                 i--;
                                 //Testando
                                 if(!operandos.isEmpty()){
                                  
                                 for (String z : operandos) {
-                                    System.out.print("operandos: ");
-                                    System.out.print(z + " ");
+                                    System.out.print("operandos: "+z);
+                                    
                                 }
                                 for (String z : valores) {
-                                    System.out.print("valores: ");
-                                    System.out.print(z + " ");
+                                    System.out.print("valores: "+z);
+                                    
                                 }
                                 }else{
                                 
                                 for (String z : valores) {
-                                    System.out.print("valores: ");
-                                    System.out.print(z + " ");
+                                    System.out.println("valores: "+z);
+                                    
                                 }
                                 break;
                                 }
                             }
                         }
                     }
-
-                    System.out.println("Objetos recebidos");
+                    
+                     DataOutputStream out = new DataOutputStream(cliente.getOutputStream());
+                     out.writeInt(Integer.parseInt(valores.get(0)));
+                     
+                    System.out.println("------Fim--------");
                     cliente.close();
 
                 } catch (Exception e) {
