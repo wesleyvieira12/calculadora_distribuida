@@ -21,7 +21,6 @@ import javax.swing.JOptionPane;
 public class Index extends javax.swing.JFrame {
 
     //Guarda valores da operação em ordem
-
     ArrayList<String> valores = new ArrayList();
     //Guarda os tipos de operações ( +, - , * , /) em ordem
     ArrayList<String> operandos = new ArrayList();
@@ -305,7 +304,6 @@ public class Index extends javax.swing.JFrame {
     }
 
     //Verifica se a operação precisa de mais de um servidor para obter o resultado
-
     private int verificandoOperandos(ArrayList<String> x) {
         int servidor1 = 0, servidor2 = 0;
         for (int i = 0; i < x.size(); i++) {
@@ -334,72 +332,44 @@ public class Index extends javax.swing.JFrame {
     }
     private void jButton_iqualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_iqualActionPerformed
         // TODO add your handling code here:
-
+        String ip_aux = "";
         separandoValoresDeOperandos(operacao.getText());
         //Verifica se tem ip cadastrado
         if (verificaIps()) {
             //Caso tenha mais de duas operações em servidores diferentes
             if (permitirOperando(operacao.getText().charAt(operacao.getText().length() - 1))) {
-            if (verificandoOperandos(operandos) == 2) {
-                
-                Socket servidor4;
+                if (verificandoOperandos(operandos) == 2) {
+                    ip_aux = ips.get(3);
+
+                } else {
+                    //Verifica se as operações são do servidor 1
+                    if (operandos.get(0).equals("+") || operandos.get(0).equals("-")) {
+
+                        ip_aux = ips.get(0);
+
+                    } else {
+                        ip_aux = ips.get(1);
+                    }
+
+                }
+
+                Socket servidor;
                 try {
                     //Criação do socket
-                    servidor4 = new Socket(ips.get(3), 12345);
+                    servidor = new Socket(ip_aux, 12345);
                     //Envio de Array contendo operadores e valores a serem calculados
-                    ObjectOutputStream out = new ObjectOutputStream(servidor4.getOutputStream());
+                    ObjectOutputStream out = new ObjectOutputStream(servidor.getOutputStream());
                     out.writeObject(operandos);
                     out.writeObject(valores);
                     out.writeObject(ips);
                     //Recebendo o resultado do servidor 4
-                    DataInputStream in = new DataInputStream(servidor4.getInputStream());
+                    DataInputStream in = new DataInputStream(servidor.getInputStream());
                     operacao.setText("" + in.readInt());
 
                 } catch (IOException ex) {
                     Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-            } else {
-                //Verifica se as operações são do servidor 1
-                if (operandos.get(0).equals("+") || operandos.get(0).equals("-")) {
-
-                    Socket servidor1;
-                    try {
-                        //Criação do socket
-                        servidor1 = new Socket(ips.get(0), 12345);
-                        //Envio de Array contendo operadores e valores a serem calculados
-                        ObjectOutputStream out = new ObjectOutputStream(servidor1.getOutputStream());
-                        out.writeObject(operandos);
-                        out.writeObject(valores);
-
-                        //Recebendo o resultado do servidor 1
-                        DataInputStream in = new DataInputStream(servidor1.getInputStream());
-                        operacao.setText("" + in.readInt());
-
-                    } catch (IOException ex) {
-                        Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                } else {
-                    Socket servidor2;
-                    try {
-                        //Criação do socket
-                        servidor2 = new Socket(ips.get(1), 12345);
-                        //Envio de Array contendo operadores e valores a serem calculados
-                        ObjectOutputStream out = new ObjectOutputStream(servidor2.getOutputStream());
-                        out.writeObject(operandos);
-                        out.writeObject(valores);
-
-                        //Recebendo o resultado do servidor 2
-                        DataInputStream in = new DataInputStream(servidor2.getInputStream());
-                        operacao.setText("" + in.readInt());
-
-                    } catch (IOException ex) {
-                        Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-
-            }
             }
 
             //Limpando operandos e valores
@@ -536,10 +506,44 @@ public class Index extends javax.swing.JFrame {
 
     private void jButton_raizActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_raizActionPerformed
         // TODO add your handling code here:
+        String ip_aux = "";
         if (verificaIps()) {
             if (!operacao.getText().equals("")) {
                 if (permitirOperando(operacao.getText().charAt(operacao.getText().length() - 1))) {
                     separandoValoresDeOperandos(operacao.getText());
+
+                    if (verificandoOperandos(operandos) == 2) {
+                        ip_aux = ips.get(3);
+
+                    } else {
+                        //Verifica se as operações são do servidor 1
+                        if (operandos.get(0).equals("+") || operandos.get(0).equals("-")) {
+
+                            ip_aux = ips.get(0);
+
+                        } else {
+                            ip_aux = ips.get(1);
+                        }
+
+                    }
+
+                    Socket servidor;
+                    try {
+                        //Criação do socket
+                        servidor = new Socket(ip_aux, 12345);
+                        //Envio de Array contendo operadores e valores a serem calculados
+                        ObjectOutputStream out = new ObjectOutputStream(servidor.getOutputStream());
+                        out.writeObject(operandos);
+                        out.writeObject(valores);
+                        out.writeObject(ips);
+                        //Recebendo o resultado do servidor 4
+                        DataInputStream in = new DataInputStream(servidor.getInputStream());
+                        operacao.setText("" + in.readInt());
+
+                    } catch (IOException ex) {
+                        Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    /*
                     Socket servidor3;
                     try {
                         //Criação do socket
@@ -548,7 +552,7 @@ public class Index extends javax.swing.JFrame {
                         ObjectOutputStream out = new ObjectOutputStream(servidor3.getOutputStream());
                         out.writeObject(operandos);
                         out.writeObject(valores);
-
+                        
                         //Recebendo o resultado do servidor 3
                         DataInputStream in = new DataInputStream(servidor3.getInputStream());
                         operacao.setText("" + in.readInt());
@@ -556,11 +560,14 @@ public class Index extends javax.swing.JFrame {
                     } catch (IOException ex) {
                         Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    */
+                    //Função da raiz quadrada
+                    //Math.sqrt(4));
                 }
-            //Limpando operandos e valores
-            operandos.removeAll(operandos);
-            valores.removeAll(valores);
-            System.out.println("Limpado operadores e valores");
+                //Limpando operandos e valores
+                operandos.removeAll(operandos);
+                valores.removeAll(valores);
+                System.out.println("Limpado operadores e valores");
             }
         }
     }//GEN-LAST:event_jButton_raizActionPerformed
