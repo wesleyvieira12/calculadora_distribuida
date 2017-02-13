@@ -5,19 +5,14 @@
  */
 package servidores;
 
-import cliente.Index;
-import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -66,50 +61,24 @@ public class servidor4 {
                                 operandos_aux.add(x);
                                 valores_aux.add(valores.get(operandos.indexOf(x)));
                                 valores_aux.add(valores.get(operandos.indexOf(x) + 1));
-                                /*Socket servidor2;
+                                Socket servidor2;
                                 //Criação do socket
                                 servidor2 = new Socket(ips.get(1), 12345);
                                 //Envio de Array contendo operadores e valores a serem calculados
-                                ObjectOutputStream out = new ObjectOutputStream(servidor2.getOutputStream());
-                                out.writeObject(operandos_aux);
-                                out.writeObject(valores);
-                                BufferedReader in = new BufferedReader(new InputStreamReader(servidor4.getInputStream()));
-                                System.out.println("Resultado:" + in.readLine());
-                                 */
-
-                                System.out.println("operador_aux:" + operandos_aux.get(0));
-                                System.out.println("valores_aux_1:" + valores_aux.get(0));
-                                System.out.println("valores_aux_2:" + valores_aux.get(1));
-
+                                ObjectOutputStream out2 = new ObjectOutputStream(servidor2.getOutputStream());
+                                out2.writeObject(operandos_aux);
+                                out2.writeObject(valores);
+                                DataInputStream in2 = new DataInputStream(servidor2.getInputStream());
+                                
                                 valores.remove(operandos.indexOf(x));
                                 valores.remove(operandos.indexOf(x));
-                                valores.add(operandos.indexOf(x), "x");
+                                valores.add(operandos.indexOf(x), ""+in2.readInt());
                                 operandos.remove(x);
                                 i--;
                                 count--;
                                 
                               
-                                //Adicionar resultado nos valores
-                                //Testando
-                                 if(!operandos.isEmpty()){
-                                 
-                                for (String z : operandos) {
-                                    System.out.print("operandos: ");
-                                    System.out.print(z + " ");
-                                }
-                                for (String z : valores) {
-                                    System.out.print("valores: ");
-                                    System.out.print(z + " ");
-                                }
-                                }else{
                                 
-                                for (String z : valores) {
-                                    System.out.print("valores: ");
-                                    System.out.print(z + " ");
-                                }
-                                     
-                                break;
-                                }
                                 
                             
                             }
@@ -129,44 +98,23 @@ public class servidor4 {
                                 operandos_aux.add(x);
                                 valores_aux.add(valores.get(operandos.indexOf(x)));
                                 valores_aux.add(valores.get(operandos.indexOf(x) + 1));
-                                /*Socket servidor2;
+                                Socket servidor1;
                                  //Criação do socket
-                                 servidor2 = new Socket(ips.get(1), 12345);
+                                 servidor1 = new Socket(ips.get(0), 12345);
                                  //Envio de Array contendo operadores e valores a serem calculados
-                                 ObjectOutputStream out = new ObjectOutputStream(servidor2.getOutputStream());
-                                 out.writeObject(operandos_aux);
-                                 out.writeObject(valores);
-                                 */
-                                System.out.println("operador_aux:" + operandos_aux.get(0));
-                                System.out.println("valores_aux_1:" + valores_aux.get(0));
-                                System.out.println("valores_aux_2:" + valores_aux.get(1));
+                                 ObjectOutputStream out1 = new ObjectOutputStream(servidor1.getOutputStream());
+                                 out1.writeObject(operandos_aux);
+                                 out1.writeObject(valores);
+                                 DataInputStream in1 = new DataInputStream(servidor1.getInputStream());
                                 
 
                                 valores.remove(operandos.indexOf(x));
                                 valores.remove(operandos.indexOf(x));
                                 //Adicionar resultado nos valores
-                                valores.add(operandos.indexOf(x), "2");
+                                valores.add(operandos.indexOf(x),""+in1.readInt());
                                 operandos.remove(x);
                                 i--;
-                                //Testando
-                                if(!operandos.isEmpty()){
-                                 
-                                for (String z : operandos) {
-                                    System.out.print("operandos: "+z);
-                                    
-                                }
-                                for (String z : valores) {
-                                    System.out.print("valores: "+z);
-                                    
-                                }
-                                }else{
                                 
-                                for (String z : valores) {
-                                    System.out.println("valores: "+z);
-                                    
-                                }
-                                break;
-                                }
                             }
                         }
                     }
@@ -174,7 +122,7 @@ public class servidor4 {
                      DataOutputStream out = new DataOutputStream(cliente.getOutputStream());
                      out.writeInt(Integer.parseInt(valores.get(0)));
                      
-                    System.out.println("------Fim--------");
+                    
                     cliente.close();
 
                 } catch (Exception e) {

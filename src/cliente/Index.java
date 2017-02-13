@@ -6,6 +6,7 @@
 package cliente;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -362,7 +363,7 @@ public class Index extends javax.swing.JFrame {
                     out.writeObject(operandos);
                     out.writeObject(valores);
                     out.writeObject(ips);
-                    //Recebendo o resultado do servidor 4
+                    //Recebendo o resultado do servidor
                     DataInputStream in = new DataInputStream(servidor.getInputStream());
                     operacao.setText("" + in.readInt());
 
@@ -506,6 +507,7 @@ public class Index extends javax.swing.JFrame {
 
     private void jButton_raizActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_raizActionPerformed
         // TODO add your handling code here:
+        int resultado = 0;
         String ip_aux = "";
         if (verificaIps()) {
             if (!operacao.getText().equals("")) {
@@ -516,17 +518,20 @@ public class Index extends javax.swing.JFrame {
                         ip_aux = ips.get(3);
 
                     } else {
-                        //Verifica se as operações são do servidor 1
-                        if (operandos.get(0).equals("+") || operandos.get(0).equals("-")) {
+                        if (!operandos.isEmpty()) {
 
-                            ip_aux = ips.get(0);
+                            //Verifica se as operações são do servidor 1                        
+                            if (operandos.get(0).equals("+") || operandos.get(0).equals("-")) {
 
-                        } else {
-                            ip_aux = ips.get(1);
+                                ip_aux = ips.get(0);
+
+                            } else {
+                                ip_aux = ips.get(1);
+                            }
                         }
-
                     }
-
+                    
+                    if (!operandos.isEmpty()) {
                     Socket servidor;
                     try {
                         //Criação do socket
@@ -536,23 +541,24 @@ public class Index extends javax.swing.JFrame {
                         out.writeObject(operandos);
                         out.writeObject(valores);
                         out.writeObject(ips);
-                        //Recebendo o resultado do servidor 4
+                        //Recebendo o resultado do servidor
                         DataInputStream in = new DataInputStream(servidor.getInputStream());
-                        operacao.setText("" + in.readInt());
+                        resultado = in.readInt();
 
                     } catch (IOException ex) {
                         Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    /*
+                    }else{
+                        resultado = Integer.parseInt(operacao.getText());
+                    }
                     Socket servidor3;
                     try {
                         //Criação do socket
-                        servidor3 = new Socket(ips.get(3), 12345);
+                        servidor3 = new Socket(ips.get(2), 12345);
                         //Envio de Array contendo operadores e valores a serem calculados
-                        ObjectOutputStream out = new ObjectOutputStream(servidor3.getOutputStream());
-                        out.writeObject(operandos);
-                        out.writeObject(valores);
-                        
+                        DataOutputStream out = new DataOutputStream(servidor3.getOutputStream());
+                        out.writeInt(resultado);
+
                         //Recebendo o resultado do servidor 3
                         DataInputStream in = new DataInputStream(servidor3.getInputStream());
                         operacao.setText("" + in.readInt());
@@ -560,7 +566,7 @@ public class Index extends javax.swing.JFrame {
                     } catch (IOException ex) {
                         Logger.getLogger(Index.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    */
+
                     //Função da raiz quadrada
                     //Math.sqrt(4));
                 }

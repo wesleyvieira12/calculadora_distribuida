@@ -20,8 +20,16 @@ public class Servidores extends javax.swing.JFrame {
      * Creates new form servidores
      */
     public Servidores() {
-    
+        
         initComponents();
+        servidores.add("127.0.0.1");
+        servidores.add("127.0.0.1");
+        servidores.add("127.0.0.1");
+        servidores.add("127.0.0.1");
+        ip_1.setText("127.0.0.1");
+        ip_2.setText("127.0.0.1");
+        ip_3.setText("127.0.0.1");
+        ip_4.setText("127.0.0.1");
     }
     
     public Servidores(ArrayList<String> ip) {
