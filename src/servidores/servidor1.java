@@ -41,11 +41,13 @@ public class servidor1 {
 
                 try {
                     System.out.println("Conectando ao cliente..");
+                    //Recebe os valores e operandos
                     ObjectInputStream in = new ObjectInputStream(cliente.getInputStream());
                     ArrayList<String> operandos = (ArrayList<String>) in.readObject();
                     ArrayList<String> valores = (ArrayList<String>) in.readObject();
                     int resultado = 0;
                     for(int i=0;i<operandos.size();i++){
+                        //verifica se a operação é iqual a mais, caso seja ele soma os dois primeiros valores
                         if(operandos.get(i).equals("+")){
                             resultado = Integer.parseInt(valores.get(i))+Integer.parseInt(valores.get(i+1));
                             valores.remove(i);
@@ -66,7 +68,7 @@ public class servidor1 {
                         
                     }                             
                     
-                    
+                    //Retorna o resultado
                      DataOutputStream out = new DataOutputStream(cliente.getOutputStream());
                      out.writeInt(Integer.parseInt(valores.get(0)));
                      

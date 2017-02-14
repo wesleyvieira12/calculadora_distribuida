@@ -42,11 +42,13 @@ public class servidor3 {
 
                 try {
                     System.out.println("Conectando ao cliente..");
+                    //Recebe o numero que será tirado a sua raiz
                     DataInputStream in = new DataInputStream(cliente.getInputStream());
                     Double x = (double) in.readInt();
+                    //Retorna o resultado
                     DataOutputStream out = new DataOutputStream(cliente.getOutputStream());
                     out.writeInt( (int)Math.sqrt(x));
-                    System.out.println((int)Math.sqrt(x)+"");
+                    
                     cliente.close();
 
                 } catch (Exception e) {

@@ -46,8 +46,9 @@ public class servidor4 {
                     ArrayList<String> operandos = (ArrayList<String>) in.readObject();
                     ArrayList<String> valores = (ArrayList<String>) in.readObject();
                     ArrayList<String> ips = (ArrayList<String>) in.readObject();
+                    //Pega o numero de operandos
                     int count = operandos.size();
-                                                         
+                    //Verifica se existe operandos a serem calculados de mais de um servidor diferente
                     while (verificandoOperandos(operandos)==2) {
                         for (int i = 0; i<count;i++) {  
                             
@@ -84,6 +85,7 @@ public class servidor4 {
                             }
                         }
                     }
+                    
                     while(verificandoOperandos(operandos)==1) {
                         count = operandos.size();
                         
@@ -119,6 +121,7 @@ public class servidor4 {
                         }
                     }
                     
+                    //Retorna o resultado final
                      DataOutputStream out = new DataOutputStream(cliente.getOutputStream());
                      out.writeInt(Integer.parseInt(valores.get(0)));
                      
